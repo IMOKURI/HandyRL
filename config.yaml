@@ -1,15 +1,15 @@
 
 env_args:
-    env: 'TicTacToe'
-    source: 'handyrl.envs.tictactoe'
+    # env: 'TicTacToe'
+    # source: 'handyrl.envs.tictactoe'
     #env: 'Geister'
     #source: 'handyrl.envs.geister'
-    #env: 'HungryGeese'
-    #source: 'handyrl.envs.kaggle.hungry_geese'
+    env: 'HungryGeese'
+    source: 'handyrl.envs.kaggle.hungry_geese'
 
 
 train_args:
-    turn_based_training: True
+    turn_based_training: False
     observation: False
     gamma: 0.8
     forward_steps: 16
@@ -27,7 +27,7 @@ train_args:
     lambda: 0.7
     policy_target: 'TD' # 'UGPO' 'VTRACE' 'TD' 'MC'
     value_target: 'TD' # 'VTRACE' 'TD' 'MC'
-    seed: 0
+    seed: 22 
     restart_epoch: 0
 
 
