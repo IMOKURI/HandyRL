@@ -23,7 +23,7 @@ train_args:
     num_batchers: 2
     eval_rate: 0.1
     worker:
-        num_parallel: 6
+        num_parallel: 8
     lambda: 0.7
     policy_target: 'UPGO' # 'UPGO' 'VTRACE' 'TD' 'MC'
     value_target: 'UPGO' # 'VTRACE' 'TD' 'MC'
