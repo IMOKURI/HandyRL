@@ -25,13 +25,13 @@ train_args:
     worker:
         num_parallel: 8
     lambda: 0.7
-    policy_target: 'TD' # 'UPGO' 'VTRACE' 'TD' 'MC'
-    value_target: 'TD' # 'VTRACE' 'TD' 'MC'
+    policy_target: 'VTRACE' # 'UPGO' 'VTRACE' 'TD' 'MC'
+    value_target: 'VTRACE' # 'VTRACE' 'TD' 'MC'
     seed: 22
     restart_epoch: 0
 
 
 worker_args:
-    server_address: ''
+    server_address: '127.0.0.1'
     num_parallel: 8
 
