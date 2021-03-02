@@ -14,6 +14,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from gtrxl_torch.gtrxl_torch import GTrXL
 
 # You need to install kaggle_environments, requests
 from kaggle_environments import make
@@ -38,6 +39,9 @@ class TorusConv2d(nn.Module):
 
 
 class GeeseNet(BaseModel):
+    """
+    12 + 1 層のCNNネットワーク
+    """
     def __init__(self, env, args={}):
         super().__init__(env, args)
         input_shape = env.observation().shape
@@ -51,6 +55,41 @@ class GeeseNet(BaseModel):
         h = F.relu_(self.conv0(x))
         for block in self.blocks:
             h = F.relu_(h + block(h))
+        h_head = (h * x[:,:1]).view(h.size(0), h.size(1), -1).sum(-1)
+        h_avg = h.view(h.size(0), h.size(1), -1).mean(-1)
+        p = self.head_p(h_head)
+        v = torch.tanh(self.head_v(torch.cat([h_head, h_avg], 1)))
+
+        # p は 4方向の行動の価値が高くなる可能性 だと思う
+        # v は 期待される価値 だと思う
+        return {'policy': p, 'value': v}
+
+
+class GeeseTransformerNet(BaseModel):
+    """
+    Gated Transformer Model for Computer Vision
+    https://github.com/alantess/gtrxl-torch
+    """
+
+    def __init__(self, env, args={}):
+        super().__init__(env, args)
+
+        input_shape = env.observation().shape
+        layers, filters = 12, 32
+
+        # TODO: update parameters
+        self.gtrxl = GTrXL(
+            d_model=512,
+            nheads=4,
+            transformer_layers=1
+        )
+
+        self.head_p = nn.Linear(filters, 4, bias=False)
+        self.head_v = nn.Linear(filters * 2, 1, bias=False)
+
+    def forward(self, x, _=None):
+        h = self.gtrxl(x)
+
         h_head = (h * x[:,:1]).view(h.size(0), h.size(1), -1).sum(-1)
         h_avg = h.view(h.size(0), h.size(1), -1).mean(-1)
         p = self.head_p(h_head)
@@ -222,9 +261,14 @@ class Environment(BaseEnvironment):
         return self.ACTION.index(action)
 
     def net(self):
-        return GeeseNet
+        return GeeseNet  # GeeseTransformerNet
 
     def observation(self, player=None):
+        """
+        現在のフィールドの状況をモデルへのインプットの形式に変換している
+
+        TODO: この変換を工夫する
+        """
         if player is None:
             player = 0
 
