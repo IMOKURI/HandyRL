@@ -25,10 +25,12 @@ train_args:
     worker:
         num_parallel: 8
     lambda: 0.7
-    policy_target: 'UPGO' # 'UPGO' 'VTRACE' 'TD' 'MC'
-    value_target: 'UPGO' # 'UPGO' 'VTRACE' 'TD' 'MC'
-    seed: 1234
-    restart_epoch: 233  # このモデル番号から学習を再開する
+    # https://qiita.com/YuriCat/items/5c2a676a67981ecca94a
+    # 最初は TD そのあと VTRACE
+    policy_target: 'TD' # 'UPGO' 'VTRACE' 'TD' 'MC'
+    value_target: 'TD' # 'UPGO' 'VTRACE' 'TD' 'MC'
+    seed: 22
+    restart_epoch: 0  # このモデル番号から学習を再開する
 
 
 worker_args:
