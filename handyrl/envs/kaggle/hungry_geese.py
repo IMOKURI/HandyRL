@@ -8,6 +8,7 @@
 
 import random
 import itertools
+import importlib
 
 import numpy as np
 import torch
@@ -207,6 +208,17 @@ class Environment(BaseEnvironment):
         agent.last_action = action_map[self.ACTION[self.last_actions[player]][0]] if player in self.last_actions else None
         obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
         action = agent(Observation(obs))
+        return self.ACTION.index(action)
+
+    def rule_based_action_smart_geese(self, player):
+        from kaggle_environments.envs.hungry_geese.hungry_geese import Observation, Configuration, Action, GreedyAgent
+        agent_path = 'handyrl.envs.kaggle.geese.smart_geese'
+        agent_module = importlib.import_module(agent_path)
+        if agent_module is None:
+            print("No environment %s" % agent_path)
+
+        obs = {**self.obs_list[-1][0]['observation'], **self.obs_list[-1][player]['observation']}
+        action = agent_module.agent(Observation(obs), None)
         return self.ACTION.index(action)
 
     def net(self):

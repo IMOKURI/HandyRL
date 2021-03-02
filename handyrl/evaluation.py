@@ -37,6 +37,11 @@ class RuleBasedAgent(RandomAgent):
             return random.choice(env.legal_actions(player))
 
 
+class RuleBasedAgentSmartGeese(RandomAgent):
+    def action(self, env, player, show=False):
+        return env.rule_based_action_smart_geese(player)
+
+
 def view(env, player=None):
     if hasattr(env, 'view'):
         env.view(player=player)
@@ -246,7 +251,8 @@ class Evaluator:
     def __init__(self, env, args):
         self.env = env
         self.args = args
-        self.default_agent = RandomAgent()  # RuleBasedAgent, trained agent, etc.
+        # self.default_agent = RandomAgent()  # RuleBasedAgent, trained agent, etc.
+        self.default_agent = RuleBasedAgentSmartGeese()  # RuleBasedAgent, trained agent, etc.
 
     def execute(self, models, args):
         agents = {}
